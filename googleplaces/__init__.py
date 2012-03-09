@@ -130,7 +130,7 @@ class GooglePlaces(object):
         self._request_params = None
 
     def query(self, location=None, lat_lng=None, keyword=None, radius=3200,
-              sensor=False, types=[]):
+              sensor=False, types=[], name=None):
         """Perform a search using the Google Places API.
 
         One of either location or lat_lng are required, the rest of the keyword
@@ -150,6 +150,9 @@ class GooglePlaces(object):
                     device using a location sensor (default False)
         types    -- An optional list of types, restricting the results to
                     Places (default [])
+        name     -- A term to be matched against against the names of Places.
+                    Results will be restricted to those containing this value.
+                    (default None)
         """
         if location is None and lat_lng is None:
             raise ValueError('One of location or lat_lng must be passed in.')
@@ -164,6 +167,8 @@ class GooglePlaces(object):
             self._request_params['types'] = '|'.join(types)
         if keyword is not None:
             self._request_params['keyword'] = keyword
+        if name is not None:
+            self._request_params['name'] = name
         self._add_required_param_keys()
         url, places_response = _fetch_remote_json(
                 GooglePlaces.QUERY_API_URL, self._request_params)
